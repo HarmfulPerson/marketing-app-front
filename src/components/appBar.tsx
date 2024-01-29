@@ -28,8 +28,13 @@ import InboxIcon from "@mui/icons-material/MoveToInbox";
 import { redirect } from "next/navigation";
 import { useRouter } from "next/navigation";
 import { useApi, useRefreshToken } from "@/app/hooks/useApi";
-import { deauthTokens, setTokens } from "@/utils/utils";
-import { REFRESH_TOKEN_PERIOD } from "@/consts";
+import {
+    deauthTokens,
+    getRoleFromLocalStorage,
+    setTokens,
+} from "@/utils/utils";
+import { roleDashboardMapper } from "@/consts";
+import Link from "next/link";
 
 type Anchor = "top" | "left" | "bottom" | "right";
 
@@ -73,12 +78,20 @@ const StyledInputBase = styled(InputBase)(({ theme }) => ({
     },
 }));
 
+const StyledLink = styled(Link)(({ theme }) => ({
+    color: "inherit",
+    textDecoration: "none",
+}));
+
 export default function PrimarySearchAppBar() {
     const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
     const [mobileMoreAnchorEl, setMobileMoreAnchorEl] =
         React.useState<null | HTMLElement>(null);
     const [state, setState] = React.useState(false);
-    const menuItems = [{ name: "Collaborations", url: "collaboration" }];
+
+    const menuItems =
+        roleDashboardMapper[getRoleFromLocalStorage() || "influencer"];
+
     const { push } = useRouter();
     useRefreshToken("/auth/refreshToken", {
         method: "GET",
@@ -108,17 +121,19 @@ export default function PrimarySearchAppBar() {
             onKeyDown={toggleDrawer(anchor, false)}>
             <List>
                 {menuItems.map((menuItem, index) => (
-                    <ListItem
+                    <StyledLink
                         key={menuItem.name}
-                        onClick={() => push(menuItem.url)}
-                        disablePadding>
-                        <ListItemButton>
-                            <ListItemIcon>
-                                <InboxIcon />
-                            </ListItemIcon>
-                            <ListItemText primary={menuItem.name} />
-                        </ListItemButton>
-                    </ListItem>
+                        href={`/${menuItem.name}`}
+                        replace>
+                        <ListItem key={menuItem.name} disablePadding>
+                            <ListItemButton>
+                                <ListItemIcon>
+                                    <menuItem.icon />
+                                </ListItemIcon>
+                                <ListItemText primary={menuItem.displayName} />
+                            </ListItemButton>
+                        </ListItem>
+                    </StyledLink>
                 ))}
             </List>
         </Box>

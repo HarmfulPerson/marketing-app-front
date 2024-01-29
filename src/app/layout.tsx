@@ -1,7 +1,8 @@
 import type { Metadata } from "next";
 import { Inter } from "next/font/google";
 import "./globals.css";
-import { wrapper } from "../store/store";
+import StoreProvider from "./StoreProvider";
+import AlertMessage from "@/components/alertMessage";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -13,9 +14,14 @@ export const metadata: Metadata = {
 function RootLayout({ children }: { children: React.ReactNode }) {
     return (
         <html lang="en">
-            <body className={inter.className}>{children}</body>
+            <StoreProvider>
+                <body className={inter.className}>
+                    {children}
+                    {<AlertMessage />}
+                </body>
+            </StoreProvider>
         </html>
     );
 }
 
-export default wrapper.withRedux(RootLayout);
+export default RootLayout;

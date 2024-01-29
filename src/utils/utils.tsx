@@ -1,5 +1,6 @@
 import jwt from "jsonwebtoken";
-import { VerifiedTokenPayload } from "./types";
+import { UserLoginData, VerifiedTokenPayload } from "./types";
+import { ROLES } from "@/consts";
 
 export const isDateInThePast = (date: Date): boolean => {
     const currentTime = new Date().getTime();
@@ -17,16 +18,23 @@ export const decodeToken = (token: string): VerifiedTokenPayload => {
     return decodedToken;
 };
 
-export const setTokens = (tokens: {
-    token: string;
-    refreshToken: string;
-}): void => {
-    const decodedToken = decodeToken(tokens.token);
-    localStorage.setItem("token", tokens.token);
-    localStorage.setItem("refreshToken", tokens.refreshToken);
-    localStorage.setItem("userData", JSON.stringify(decodedToken));
+export const setTokens = (
+    loginData: UserLoginData,
+    isFromFirstLogin: boolean = false
+): void => {
+    localStorage.setItem("token", loginData.tokens.token);
+    localStorage.setItem("refreshToken", loginData.tokens.refreshToken);
+    isFromFirstLogin &&
+        localStorage.setItem("userData", JSON.stringify(loginData.userData));
 };
 
 export const deauthTokens = () => {
+    if (typeof window === "undefined") return null;
     localStorage.clear();
+};
+
+export const getRoleFromLocalStorage = (): keyof typeof ROLES | null => {
+    if (typeof window === "undefined") return null;
+    return JSON.parse(localStorage.getItem("userData") || "{}")
+        ?.role as keyof typeof ROLES;
 };

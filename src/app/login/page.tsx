@@ -3,8 +3,9 @@
 import { useEffect, useState } from "react";
 import LoginPageRender from "./pageRender";
 import { useApi } from "../hooks/useApi";
-import { decodeToken, setTokens } from "@/utils/utils";
+import { setTokens } from "@/utils/utils";
 import { useRouter } from "next/navigation";
+
 export default function LoginPage() {
     const [email, setEmail] = useState("");
     const { push } = useRouter();
@@ -28,7 +29,7 @@ export default function LoginPage() {
         e.preventDefault();
         const response = await login();
         if (response) {
-            setTokens(response.data);
+            setTokens(response.data, true);
             push("/");
         }
     };

@@ -1,6 +1,6 @@
 "use client";
 
-import InputButton from "@/components/inputButton/inputButton";
+import InputButton from "@/components/inputButton";
 import SubmitButton from "@/components/submitButton";
 import { useState } from "react";
 import Box from "@mui/material/Box";

@@ -1,10 +1,12 @@
 import { PayloadAction, createSlice } from "@reduxjs/toolkit";
-import { AppState } from "./store";
 import { HYDRATE } from "next-redux-wrapper";
+import { RootState } from "@reduxjs/toolkit/query";
+import { NotificationTypes } from "@/utils/types";
 
-type Notification = {
+export type Notification = {
     id: number;
-    type: string;
+    type: NotificationTypes;
+    name: string;
     message: string;
 };
 export type NotificationState = {
@@ -19,13 +21,13 @@ export const notificationSlice = createSlice({
     name: "notification",
     initialState,
     reducers: {
-        addNotification(state, action) {
+        addNotification(state, action: { payload: Omit<Notification, "id"> }) {
             state.notificationState = [
                 ...state.notificationState,
                 { ...action.payload, id: state.notificationState.length + 1 },
             ];
         },
-        removeNotification(state, action) {
+        removeNotification(state, action: { payload: number }) {
             state.notificationState = state.notificationState.filter(
                 (notification) => notification.id !== action.payload
             );
@@ -35,8 +37,5 @@ export const notificationSlice = createSlice({
 
 export const { addNotification, removeNotification } =
     notificationSlice.actions;
-
-export const selectNotificationSlice = (state: AppState) =>
-    state.notification.notificationState;
 
 export default notificationSlice.reducer;
